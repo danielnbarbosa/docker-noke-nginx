@@ -1,0 +1,15 @@
+[Unit]
+Description=noke.bit nginx server
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill noke-nginx-%i
+ExecStartPre=-/usr/bin/docker rm noke-nginx-%i
+ExecStartPre=/usr/bin/docker pull danielnbarbosa/noke-nginx
+ExecStart=/usr/bin/docker run --rm --name noke-nginx-%i --link loggly-agent:loggly -p 80:80 danielnbarbosa/noke-nginx /opt/run.sh
+ExecStop=/usr/bin/docker stop noke-nginx-%i
+
+[X-Fleet]
+Conflicts=noke-nginx@*.service

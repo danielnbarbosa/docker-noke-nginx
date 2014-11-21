@@ -1,0 +1,25 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  cache_directories:
+    - "~/docker"
+
+  override:
+    - docker info
+    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
+    - docker build -t danielnbarbosa/noke-nginx .
+    - mkdir -p ~/docker; docker save danielnbarbosa/noke-nginx > ~/docker/image.tar
+
+test:
+  override:
+    - /bin/bash -c "/usr/bin/docker run -d -p 514/udp --name loggly-agent -e TOKEN=foo -e TAG=Docker danielnbarbosa/docker-loggly-agent"
+    - docker run -d --link loggly-agent:loggly -p 80:80 danielnbarbosa/noke-nginx /opt/run.sh
+
+deployment:
+  coreos: 
+    branch: master
+    commands:
+      - sed "s/<EMAIL>/$DOCKER_EMAIL/;s/<AUTH>/$DOCKER_AUTH/" < .dockercfg.template > ~/.dockercfg
+      - bash -x deploy.sh $CIRCLE_SHA1
