@@ -23,4 +23,4 @@ deployment:
     branch: master
     commands:
       - sed "s/<EMAIL>/$DOCKER_EMAIL/;s/<AUTH>/$DOCKER_AUTH/" < .dockercfg.template > ~/.dockercfg
-      - bash -x deploy.sh $CIRCLE_SHA1
+      - bash -x rolling_deploy.sh $CIRCLE_SHA1
