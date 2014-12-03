@@ -7,7 +7,7 @@ docker push danielnbarbosa/noke-nginx
 UNIT=noke-nginx
 SLEEP=3
 USER=core
-HOST=54.67.14.65
+HOST=54.67.119.167
 
 scp ${UNIT}@.service ${USER}@${HOST}:
 ssh ${USER}@${HOST} -C "fleetctl destroy ${UNIT}@.service  && sleep $SLEEP && fleetctl submit ${UNIT}@.service && sleep $SLEEP"
